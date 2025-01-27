@@ -28,7 +28,7 @@ typedef struct s_cmd
 	char	*input_file;
 	char	*output_file;
 	int		is_append;
-	s_cmd	*next;
+	struct s_cmd	*next;
 }	t_cmd;
 
 void	display_prompt(void);
