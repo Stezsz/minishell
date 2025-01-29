@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int	main(int ac, char **av, char **env) //env recupera as variaveis de ambiente
+int	main(int ac, char **av, char **env)
 {
 	char	*input;
 
@@ -20,22 +20,19 @@ int	main(int ac, char **av, char **env) //env recupera as variaveis de ambiente
 	(void)av;
 	while (1)
 	{
-		// Exibe o prompt e aguarda a entrada do usuário
 		display_prompt();
-		input = readline("minishell> ");
-		// Se o usuário pressionar Ctrl+D, saia do loop
+		input = readline("\033[1;32mminishell>\033[0m ");
 		if (!input)
 		{
 			printf("exit\n");
 			break ;
 		}
-		// Se a entrada não for vazia, execute o comando
 		if (*input)
 		{
-			add_history(input); // Adiciona a entrada ao histórico
+			add_history(input);
 			execute_command(input, env);
 		}
-		// Libera a memória alocada para a entrada
 		free(input);
 	}
+	return (0);
 }
