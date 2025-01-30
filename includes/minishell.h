@@ -31,8 +31,19 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }	t_cmd;
 
+/* Exibe o prompt */
 void	display_prompt(void);
-void	execute_command(char *input, char **env);
+
+/* Encontra o caminho do executável */
 char	*find_executable_path(char *command, char **env);
+
+/* Executa um comando */
+void	execute_command(char *input, char **env);
+
+/* Trata comandos built-in */
+int	handle_builtin_commands(char **args, char **env);
+
+/* Função auxiliar para dividir strings (implemente ou inclua libft) */
+char	**ft_split(char const *s, char c);
 
 #endif
