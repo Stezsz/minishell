@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: strodrig <strodrig@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 14:48:54 by tborges-          #+#    #+#             */
-/*   Updated: 2025/01/30 14:50:52 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/01/30 18:22:33 by strodrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,3 +23,5 @@ int main(int argc, char **argv)
 	return (0);
 
 }
+
+//Os comandos basicos do linux, como cd, pwd e ls são importados direto do char **env da main
