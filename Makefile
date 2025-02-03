@@ -4,7 +4,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
-FILES = minishell main_utils utils
+FILES = minishell
 
 SRC		= $(FILES:=.c)
 OBJ		= $(FILES:=.o)
