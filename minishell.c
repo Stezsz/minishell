@@ -12,27 +12,24 @@
 
 #include "minishell.h"
 
+void	init_data(t_data *data)
+{
+	data->exit_status = 0;
+	data->which = 0;
+	data->pid = 0;
+	data-> tree = NULL;
+	data->ev = NULL;
+	data->alloc = 0;
+}
+
 int	main(int ac, char **av, char **env)
 {
-	char	*input;
-
-	(void)ac;
 	(void)av;
-	while (1)
-	{
-		display_prompt();
-		input = readline("\033[1;32mminishell>\033[0m ");
-		if (!input)
-		{
-			printf("exit\n");
-			break ;
-		}
-		if (*input)
-		{
-			add_history(input);
-			execute_command(input, env);
-		}
-		free(input);
-	}
+	t_data data;
+
+	if (ac != 1 || !*env)
+		return (1);
+	init_data(&data); // Inicializa a estrutura de dados para o MiniShell
+	init_signals(&data); // Inicializa os sinais
 	return (0);
 }
