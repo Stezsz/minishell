@@ -18,6 +18,7 @@
 # include <unistd.h>
 # include <limits.h>
 # include <string.h>
+# include <errno.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -26,7 +27,7 @@
 
 # define PROMPT "\x1B[36m[minishell]\x1B[35m[:)]\x1B[36m~> \x1B[0m"
 
-typedef struct sigaction t_sigaction;
+typedef struct sigaction	t_sigaction;
 
 typedef enum e_bool
 {
@@ -51,16 +52,22 @@ enum e_token
 	_NULL = 0,
 };
 
-typedef struct s_elem	t_elem;
-typedef struct s_list	t_list;
-typedef struct s_data	t_data;
-typedef struct s_cmd	t_cmd;
-typedef struct s_pipe	t_pipe;
+enum e_shell_state
+{
+	SH_READING,
+	SH_EXECUTING,
+};
+
+typedef struct s_elem		t_elem;
+typedef struct s_list		t_list;
+typedef struct s_data		t_data;
+typedef struct s_cmd		t_cmd;
+typedef struct s_pipe		t_pipe;
 typedef struct s_ast_node	t_ast_node;
-typedef struct s_ast	t_ast;
+typedef struct s_ast		t_ast;
 typedef struct s_env_elem	t_env_elem;
-typedef struct s_env	t_env;
-typedef union u_union	t_union;
+typedef struct s_env		t_env;
+typedef union u_union		t_union;
 
 enum e_node_type
 {
@@ -68,7 +75,7 @@ enum e_node_type
 	PIPE,
 };
 
-typedef struct s_env_elem	// Lista duplamente encadeada para armazenar as variáveis de ambiente como pares chave/valor.
+typedef struct s_env_elem // Lista duplamente encadeada para armazenar as variáveis de ambiente como pares chave/valor.
 {
 	char				*key;	// Nome da variável de ambiente
 	char				*value;	// Valor da variável de ambiente
@@ -76,7 +83,7 @@ typedef struct s_env_elem	// Lista duplamente encadeada para armazenar as variá
 	struct s_env_elem	*prev;	// Elemento anterior na lista
 }	t_env_elem;
 
-typedef struct s_env	// Lista duplamente encadeada para armazenar as variáveis de ambiente.
+typedef struct s_env // Lista duplamente encadeada para armazenar as variáveis de ambiente.
 {
 	t_env_elem			*head;	// Cabeça da lista
 	char				**env;	// Variáveis de ambiente
@@ -152,13 +159,26 @@ typedef struct s_data // Dados gerais do MiniShell
 	t_list	*lex;			// Lista de tokens lexicais
 	t_env	*ev;			// Lista de variáveis de ambiente
 	t_ast	*tree;			// Árvore de sintaxe abstrata
+	enum e_shell_state	shell_state;	// Estado do MiniShell
 }	t_data;
 
 /* --- minishell.c --- */
 void	init_data(t_data *data);
 
-
 /* --- signals.c --- */
-void	init_signals(t_data *data)ç
+void	init_signals(t_data *data);
+void	signals_handler(int sig, siginfo_t *siginfo, void *ptr);
+void	catch_sig(t_sigaction *sa);
+void	mask_signals(t_sigaction *sa);
+void	init_sig_list(t_data *data);
+
+/* --- program.c --- */
+int		cmd_count(t_ast_node *ptr);
+void	ft_wait(void);
+void	set_g_data(char **env);
+int		ft_readline(char **line);
+void	lunch_shell(char **env);
+
+extern t_data *g_data_ptr;
 
 #endif
