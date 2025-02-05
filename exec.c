@@ -6,17 +6,18 @@
 /*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 14:48:54 by tborges-          #+#    #+#             */
-/*   Updated: 2025/02/04 19:41:56 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/02/05 17:12:07 by tborges-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
+#include <errno.h>
 
 /**
  * Verifica se o comando passado como argumento é um PATH (se tiver uma '/' signifca que o utilizador quer
@@ -61,6 +62,78 @@ char	*find_executable(char *cmd)
 }
 
 /**
+ * trata dos redirecionamentos de output (> e >>)
+ * e de input (< e <<).
+ */
+void handle_redirections(char **args)
+{
+    for (int i = 0; args[i]; i++)
+    {
+        if (strcmp(args[i], ">") == 0)
+        {
+            int fd = open(args[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (fd == -1)
+            {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+            args[i] = NULL;
+        }
+        else if (strcmp(args[i], ">>") == 0)
+        {
+            int fd = open(args[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+            if (fd == -1)
+            {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+            args[i] = NULL;
+        }
+		else if (strcmp(args[i], "<") == 0)
+        {
+            int fd = open(args[i + 1], O_RDONLY);
+            if (fd == -1)
+            {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDIN_FILENO);
+            close(fd);
+            args[i] = NULL;
+        }
+		else if (strcmp(args[i], "<<") == 0)
+        {
+            int pipe_fd[2];
+            if (pipe(pipe_fd) == -1)
+            {
+                perror("pipe");
+                exit(EXIT_FAILURE);
+            }
+            char *delimiter = args[i + 1];
+            char buffer[1024];
+            while (1)
+            {
+                printf("heredoc> ");
+                fflush(stdout);
+                if (!fgets(buffer, sizeof(buffer), stdin))
+                    break;
+                if (strncmp(buffer, delimiter, strlen(delimiter)) == 0 && buffer[strlen(delimiter)] == '\n')
+                    break;
+                write(pipe_fd[1], buffer, strlen(buffer));
+            }
+            close(pipe_fd[1]);
+            dup2(pipe_fd[0], STDIN_FILENO);
+            close(pipe_fd[0]);
+            args[i] = NULL;
+        }
+    }
+}
+
+/**
  * Executa o comando passado como argumento.
  *
  * Cria um processo filho com o fork e executa o comando no processo filho.
@@ -84,6 +157,7 @@ void	execute_command(char *cmd, char **args, char **envp)
 	}
 	if (pid == 0)
 	{
+		handle_redirections(args);
 		if (execve(exec_path, args, envp) == -1)
 		{
 			perror("execve");
@@ -91,10 +165,14 @@ void	execute_command(char *cmd, char **args, char **envp)
 		}
 	}
 	else
-		waitpid(pid, NULL, 0);
+	{
+		int status;
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status))
+            printf("Process exited with status %d\n", WEXITSTATUS(status));
+	}
 	free(exec_path);
 }
-
 
 
 /**
