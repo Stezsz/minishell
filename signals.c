@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-t_data *g_data_ptr; // Ponteiro global para a estrutura de dados
+t_data	*g_data_ptr; // Ponteiro global para a estrutura de dados
 
 // Inicializa a lista de sinais com descrições
 void	init_sig_list(t_data *data)
@@ -66,7 +66,7 @@ void	signals_handler(int sig, siginfo_t *siginfo, void *ptr)
 	(void) siginfo;
 	if (sig == SIGINT)
 	{
-		if(g_data_ptr->shell_state != SH_READING)
+		if (g_data_ptr->shell_state != SH_READING)
 			return ;
 		write(STDOUT_FILENO, "\n", 1);
 		rl_on_new_line();

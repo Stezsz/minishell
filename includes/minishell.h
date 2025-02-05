@@ -25,9 +25,9 @@
 
 # define EQUAL 0
 
-#define RESET_COLOR "\x1B[0m"
-#define CYAN "\x1B[36m"
-#define MAGENTA "\x1B[35m"
+# define RESET_COLOR "\x1B[0m"
+# define CYAN "\x1B[36m"
+# define MAGENTA "\x1B[35m"
 
 typedef struct sigaction	t_sigaction;
 
@@ -186,6 +186,6 @@ int		ft_strcmp(const char *s1, const char *s2);
 int		ft_strlen(const char *s);
 int		ft_strisspace(char *str);
 
-extern t_data *g_data_ptr;
+extern t_data				*g_data_ptr;
 
 #endif

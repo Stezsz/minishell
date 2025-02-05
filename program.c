@@ -19,7 +19,7 @@ void	write_prompt(void)
 
 	cwd = getcwd(NULL, 0); // Obter o diretório de trabalho atual
 	if (!cwd)
-		return;
+		return ;
 	write(1, CYAN, 5);
 	write(1, cwd, strlen(cwd));
 	write(1, MAGENTA, 5);
