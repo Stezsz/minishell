@@ -1,0 +1,17 @@
+Makefile
+exec
+exec.c
+includes
+input.txt
+leite
+minishell
+minishell.c
+minishell.o
+outpup.txt
+output.txt
+program.c
+program.o
+signals.c
+signals.o
+utils.c
+utils.o
