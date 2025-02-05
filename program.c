@@ -12,96 +12,59 @@
 
 #include "minishell.h"
 
-// Conta o número de comandos na árvore de sintaxe abstrata (AST)
-int	cmd_count(t_ast_node *ptr)
+// Função para escrever o prompt do shell
+void	write_prompt(void)
 {
-	static int	count;
+	char	*cwd;
 
-	if (ptr->type == CMD)
-		count++;
-	else
-	{
-		cmd_count(ptr->content->pipe->right);
-		cmd_count(ptr->content->pipe->left);
-	}
-	return (count);
+	cwd = getcwd(NULL, 0); // Obter o diretório de trabalho atual
+	if (!cwd)
+		return;
+	write(1, CYAN, 5);
+	write(1, cwd, strlen(cwd));
+	write(1, MAGENTA, 5);
+	write(1, "$ ", 2);
+	write(1, RESET_COLOR, 4);
+	free(cwd);
 }
 
-// Espera pelos processos filhos
-void	ft_wait(void)
-{
-	int	status;
-
-	status = 0;
-	while (1)
-	{
-		g_data_ptr->pid = waitpid(-1, &status, 0);
-		if (g_data_ptr->pid == -1 && errno == EINTR)
-			continue ;
-		if (g_data_ptr->pid == -1)
-			break ;
-	}
-	if (WIFSIGNALED(status))
-	{
-		g_data_ptr->exit_status = WTERMSIG(status) + 128;
-		if (WTERMSIG(status) == SIGINT)
-			write(STDOUT_FILENO, "\n", 1);
-	}
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGQUIT)
-		printf("%s: %i\n", g_data_ptr->siglist[status], status);
-	g_data_ptr->which = 0;
-}
-
-// Configura os dados globais
-void	set_g_data(char **env)
-{
-	g_data_ptr->env = env;
-	g_data_ptr->ev = create_env(env);
-	g_data_ptr->tree = init_tree(g_data_ptr->tree);
-	g_data_ptr->shell_state = SH_READING;
-}
-
-// Lê a linha de comando
+// Função para ler uma linha da entrada do usuário
 int	ft_readline(char **line)
 {
-	*line = readline("[minishell][:)]~> ");
-	g_data_ptr->shell_state = SH_EXECUTING;
+	write_prompt();
+	*line = readline("");
 	if (!*line)
 	{
-		printf("exit\n");
+		write(1, "exit\n", 5);
 		exit(1);
 	}
-	if (strcmp(*line, "") == EQUAL || ft_strisspace(*line))
+	if (ft_strcmp(*line, "") == EQUAL || ft_strisspace(*line))
+	{
+		free(*line);
 		return (1);
-	if (strlen(*line) > 0)
+	}
+	if (ft_strlen(*line) > 0)
 		add_history(*line);
 	return (0);
 }
 
-// Inicializa o MiniShell
-void	lunch_shell(char **env)
+// Função para definir dados globais (atualmente não faz nada)
+void	set_g_data(char **env)
+{
+	(void)env;
+}
+
+// Função para iniciar o shell
+void	launch_shell(char **env)
 {
 	char	*line;
 
 	line = NULL;
 	while (1)
 	{
-		set_g_data(env);
+		set_g_data(env); // Definir dados globais
 		if (ft_readline(&line))
 			continue ;
-		g_data_ptr->lex = lexer(line);
-		if (!syntax_errors(g_data_ptr->lex))
-		{
-			if (parse(&g_data_ptr->tree, g_data_ptr->lex->head, g_data_ptr->ev)
-				== EXIT_FAILURE)
-				continue ;
-			execute(g_data_ptr->tree->root, &env, cmd_count(g_data_ptr->tree->root),
-				g_data_ptr->lex->head);
-			free_lexer_parser(g_data_ptr->lex, g_data_ptr->tree);
-			ft_wait();
-		}
-		else
-			free_lexer(g_data_ptr->lex);
-		del_env(g_data_ptr->ev);
+		// ...existing code...
 	}
 }

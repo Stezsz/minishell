@@ -33,6 +33,6 @@ int	main(int ac, char **av, char **env)
 		return (1);
 	init_data(&data); // Inicializa a estrutura de dados para o MiniShell
 	init_signals(&data); // Inicializa os sinais
-	lunch_shell(env); // Inicializa o MiniShell
+	launch_shell(env); // Inicializa o MiniShell
 	return (0);
 }

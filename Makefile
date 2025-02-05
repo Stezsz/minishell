@@ -4,7 +4,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
-FILES = minishell signals program
+FILES = minishell signals program utils
 
 SRC		= $(FILES:=.c)
 OBJ		= $(FILES:=.o)

@@ -25,7 +25,9 @@
 
 # define EQUAL 0
 
-# define PROMPT "\x1B[36m[minishell]\x1B[35m[:)]\x1B[36m~> \x1B[0m"
+#define RESET_COLOR "\x1B[0m"
+#define CYAN "\x1B[36m"
+#define MAGENTA "\x1B[35m"
 
 typedef struct sigaction	t_sigaction;
 
@@ -177,7 +179,12 @@ int		cmd_count(t_ast_node *ptr);
 void	ft_wait(void);
 void	set_g_data(char **env);
 int		ft_readline(char **line);
-void	lunch_shell(char **env);
+void	launch_shell(char **env);
+
+/* --- utils.c --- */
+int		ft_strcmp(const char *s1, const char *s2);
+int		ft_strlen(const char *s);
+int		ft_strisspace(char *str);
 
 extern t_data *g_data_ptr;
 
