@@ -6,7 +6,7 @@
 /*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 18:20:44 by tborges-          #+#    #+#             */
-/*   Updated: 2025/02/06 19:21:47 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/02/06 19:38:31 by tborges-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
  */
 void builtin_echo(char **args)
 {
+	expand_args(args);
     for (int i = 1; args[i]; i++)
     {
         printf("%s", args[i]);

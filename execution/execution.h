@@ -6,7 +6,7 @@
 /*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 18:29:34 by tborges-          #+#    #+#             */
-/*   Updated: 2025/02/06 19:22:22 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/02/06 19:37:38 by tborges-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,3 +38,8 @@ void builtin_exit();
 
 int is_builtin(char *cmd);
 void execute_builtin(char **args, char **envp);
+
+
+// environment variables
+char *expand_variable(char *arg);
+void expand_args(char **args);

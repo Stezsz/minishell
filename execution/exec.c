@@ -6,7 +6,7 @@
 /*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 14:48:54 by tborges-          #+#    #+#             */
-/*   Updated: 2025/02/06 19:12:54 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/02/06 19:38:53 by tborges-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,9 @@ void execute_command(char **args, char **envp)
     free(exec_path);
 }
 
+/**
+ * Executa dois comandos em sequência.
+ */
 void execute_piped_commands(char **cmd1, char **cmd2, char **envp)
 {
     int pipe_fd[2];
@@ -295,6 +298,8 @@ void minishell_loop(char **envp)
             add_history(input);
 
         char *args[] = {input, NULL};
+        expand_args(args);
+
         if (is_builtin(args[0]))
             execute_builtin(args, envp);
         else
