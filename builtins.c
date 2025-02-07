@@ -128,7 +128,7 @@ void builtin_env(char **envp)
 {
     for (int i = 0; envp[i]; i++)
         printf("%s\n", envp[i]);
-        g_data_ptr->exit_status = 0;
+    g_data_ptr->exit_status = 0;
 }
 
 /**
@@ -158,9 +158,9 @@ void execute_builtin(char **args, char **envp)
     if (strcmp(args[0], "echo") == 0)
         builtin_echo(args);
     else if (strcmp(args[0], "cd") == 0)
-        builtin_pwd();
-    else if (strcmp(args[0], "pwd") == 0)
         builtin_cd(args);
+    else if (strcmp(args[0], "pwd") == 0)
+        builtin_pwd();
     else if (strcmp(args[0], "export") == 0)
         builtin_export(args);
     else if (strcmp(args[0], "unset") == 0)

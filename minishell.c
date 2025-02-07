@@ -36,3 +36,5 @@ int	main(int ac, char **av, char **env)
 	launch_shell(env); // Inicializa o MiniShell
 	return (0);
 }
+
+// Comando " ", apaga tudo BUG;
