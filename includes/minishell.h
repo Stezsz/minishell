@@ -216,7 +216,6 @@ void execute_builtin(char **args, char **envp);
 
 
 // environment variables
-int g_exit_status = 0;
 char *expand_variable(char *arg);
 void expand_args(char **args);
 

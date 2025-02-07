@@ -6,7 +6,7 @@
 /*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 14:48:54 by tborges-          #+#    #+#             */
-/*   Updated: 2025/02/07 13:16:54 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/02/07 16:22:56 by tborges-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ void execute_command(char **args, char **envp)
     if (!exec_path)
     {
         fprintf(stderr, "minishell: command not found: %s\n", args[0]);
-        g_exit_status = 127;
+        g_data_ptr->exit_status = 127;
         return;
     }
 
@@ -160,9 +160,9 @@ void execute_command(char **args, char **envp)
         int status;
         waitpid(pid, &status, 0);
         if (WIFEXITED(status))
-            g_exit_status = WEXITSTATUS(status);
+            g_data_ptr->exit_status = WEXITSTATUS(status);
         else
-            g_exit_status = 1;
+            g_data_ptr->exit_status = 1;
     }
     free(exec_path);
 }

@@ -6,7 +6,7 @@
 /*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 18:20:44 by tborges-          #+#    #+#             */
-/*   Updated: 2025/02/07 13:22:02 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/02/07 16:23:42 by tborges-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,16 @@ void builtin_cd(char **args)
     if (!args[1])
     {
         fprintf(stderr, "minishell: cd: missing argument\n");
-        g_exit_status = 1;
+        g_data_ptr->exit_status = 1;
         return;
     }
     if (chdir(args[1]) != 0)
     {
         perror("cd");
-        g_exit_status = 1;
+            g_data_ptr->exit_status = 1;
     }
     else
-        g_exit_status = 0;
+        g_data_ptr->exit_status = 0;
 }
 
 /**
@@ -89,16 +89,16 @@ void builtin_export(char **args)
     if (!args[1])
     {
         fprintf(stderr, "minishell: export: missing argument\n");
-        g_exit_status = 1;
+        g_data_ptr->exit_status = 1;
         return;
     }
     if (putenv(args[1]) != 0)
     {
         perror("export");
-        g_exit_status = 1;
+        g_data_ptr->exit_status = 1;
     }
     else
-        g_exit_status = 0;
+        g_data_ptr->exit_status = 0;
 }
 
 /**
@@ -109,16 +109,16 @@ void builtin_unset(char **args)
     if (!args[1])
     {
         fprintf(stderr, "minishell: unset: missing argument\n");
-        g_exit_status = 1;
+        g_data_ptr->exit_status = 1;
         return;
     }
     if (unsetenv(args[1]) != 0)
     {
         perror("unset");
-        g_exit_status = 1;
+        g_data_ptr->exit_status = 1;
     }
     else
-        g_exit_status = 0;
+        g_data_ptr->exit_status = 0;
 }
 
 /**
@@ -128,7 +128,7 @@ void builtin_env(char **envp)
 {
     for (int i = 0; envp[i]; i++)
         printf("%s\n", envp[i]);
-    g_exit_status = 0;
+        g_data_ptr->exit_status = 0;
 }
 
 /**
@@ -137,7 +137,7 @@ void builtin_env(char **envp)
 void builtin_exit()
 {
     printf("exit\n");
-    exit(g_exit_status);
+    exit(g_data_ptr->exit_status);
 }
 
 /**

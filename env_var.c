@@ -6,7 +6,7 @@
 /*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:37:14 by tborges-          #+#    #+#             */
-/*   Updated: 2025/02/07 13:10:56 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/02/07 16:23:06 by tborges-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char *expand_variable(char *arg)
     {
         char *status = malloc(12);
         if (status)
-            snprintf(status, 12, "%d", g_exit_status);
+            snprintf(status, 12, "%d", g_data_ptr->exit_status);
         return status;
     }
     if (arg[0] != '$')
