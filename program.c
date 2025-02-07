@@ -65,6 +65,13 @@ void	launch_shell(char **env)
 		set_g_data(env); // Definir dados globais
 		if (ft_readline(&line))
 			continue ;
-		// ...existing code...
+		char *args[] = {line, NULL};
+		expand_args(args);
+
+		if (is_builtin(args[0]))
+			execute_builtin(args, env);
+		else
+			execute_command(args, env);
+		free(line);
 	}
 }
