@@ -6,7 +6,7 @@
 /*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 18:20:44 by tborges-          #+#    #+#             */
-/*   Updated: 2025/02/06 19:38:31 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/02/07 13:22:02 by tborges-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,23 @@
  */
 void builtin_echo(char **args)
 {
-	expand_args(args);
-    for (int i = 1; args[i]; i++)
+    int i = 1;
+    int newline = 1;
+
+    if (args[i] && strcmp(args[i], "-n") == 0)
+    {
+        newline = 0;
+        i++;
+    }
+
+    for (; args[i]; i++)
     {
         printf("%s", args[i]);
         if (args[i + 1])
             printf(" ");
     }
-    printf("\n");
+    if (newline)
+        printf("\n");
 }
 
 /**
@@ -48,10 +57,16 @@ void builtin_cd(char **args)
     if (!args[1])
     {
         fprintf(stderr, "minishell: cd: missing argument\n");
+        g_exit_status = 1;
         return;
     }
     if (chdir(args[1]) != 0)
+    {
         perror("cd");
+        g_exit_status = 1;
+    }
+    else
+        g_exit_status = 0;
 }
 
 /**
@@ -74,10 +89,16 @@ void builtin_export(char **args)
     if (!args[1])
     {
         fprintf(stderr, "minishell: export: missing argument\n");
+        g_exit_status = 1;
         return;
     }
     if (putenv(args[1]) != 0)
+    {
         perror("export");
+        g_exit_status = 1;
+    }
+    else
+        g_exit_status = 0;
 }
 
 /**
@@ -88,10 +109,16 @@ void builtin_unset(char **args)
     if (!args[1])
     {
         fprintf(stderr, "minishell: unset: missing argument\n");
+        g_exit_status = 1;
         return;
     }
     if (unsetenv(args[1]) != 0)
+    {
         perror("unset");
+        g_exit_status = 1;
+    }
+    else
+        g_exit_status = 0;
 }
 
 /**
@@ -101,6 +128,7 @@ void builtin_env(char **envp)
 {
     for (int i = 0; envp[i]; i++)
         printf("%s\n", envp[i]);
+    g_exit_status = 0;
 }
 
 /**
@@ -109,7 +137,7 @@ void builtin_env(char **envp)
 void builtin_exit()
 {
     printf("exit\n");
-    exit(0);
+    exit(g_exit_status);
 }
 
 /**

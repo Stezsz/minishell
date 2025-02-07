@@ -6,7 +6,7 @@
 /*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 18:29:34 by tborges-          #+#    #+#             */
-/*   Updated: 2025/02/06 19:37:38 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/02/07 13:12:29 by tborges-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,6 @@ void execute_builtin(char **args, char **envp);
 
 
 // environment variables
+int g_exit_status = 0;
 char *expand_variable(char *arg);
 void expand_args(char **args);
