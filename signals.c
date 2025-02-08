@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: strodrig <strodrig@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 13:18:33 by strodrig          #+#    #+#             */
-/*   Updated: 2025/02/03 13:18:33 by strodrig         ###   ########.fr       */
+/*   Updated: 2025/02/08 15:37:46 by tborges-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	signals_handler(int sig, siginfo_t *siginfo, void *ptr)
 			return ;
 		write(STDOUT_FILENO, "\n", 1);
 		rl_on_new_line();
-		rl_replace_line("", 0);
+		rl_replace_line("", 0); // leite: esta linha tambem da erro no meu pc
 		rl_redisplay();
 		g_data_ptr->exit_status = 1;
 	}
@@ -86,7 +86,7 @@ void	init_signals(t_data *data)
 	memset(&sa, 0, sizeof(sa));
 	sa.sa_sigaction = &signals_handler;
 	sa.sa_flags = SA_SIGINFO;
-	rl_catch_signals = 0;
+	rl_catch_signals = 0; // leite: no meu pc só funciona com isto: rl_initialize();
 	data->exit_status = 0;
 	mask_signals(&sa);
 	catch_sig(&sa);

@@ -10,7 +10,7 @@ SRC		= $(FILES:=.c)
 OBJ		= $(FILES:=.o)
 HEADER = includes/minishell.h
 INCLUDES	= -I includes
-LDFLAGS	+= -lreadline
+LDFLAGS	+= -lreadline # leite: no meu pc dá se usar isto-> LDFLAGS	+= -L/usr/lib -ledit
 
 #Colors:
 GREEN		=	\033[92;5;118m
