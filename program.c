@@ -51,7 +51,10 @@ int	ft_readline(char **line)
 // Função para definir dados globais (atualmente não faz nada)
 void	set_g_data(char **env)
 {
-	(void)env;
+	g_data_ptr->env = env;
+	//g_data_ptr.ev = create_env(env); criar create_env
+	g_data_ptr->tree = init_tree(g_data_ptr->tree);
+	g_data_ptr->shell_state = SH_READING;
 }
 
 // Função para iniciar o shell
@@ -67,7 +70,6 @@ void	launch_shell(char **env)
 			continue ;
 		char *args[] = {line, NULL};
 		expand_args(args);
-
 		if (is_builtin(args[0]))
 			execute_builtin(args, env);
 		else

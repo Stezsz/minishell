@@ -4,7 +4,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
-FILES = minishell signals program utils builtins env_var exec
+FILES = minishell signals program utils builtins env_var exec parser/ast
 
 SRC		= $(FILES:=.c)
 OBJ		= $(FILES:=.o)

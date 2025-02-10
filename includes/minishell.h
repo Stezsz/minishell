@@ -197,13 +197,13 @@ int		ft_strcmp(const char *s1, const char *s2);
 int		ft_strlen(const char *s);
 int		ft_strisspace(char *str);
 
-// exec.c
+/* --- exec.c --- */
 char *find_executable(char *cmd);
 void handle_redirections(char **args);
 void execute_command(char **args, char **envp);
 void execute_piped_commands(char **cmd1, char **cmd2, char **envp);
 
-//builtins
+/* --- builtins.c --- */
 void builtin_echo(char **args);
 void builtin_cd(char **args);
 void builtin_pwd();
@@ -211,12 +211,13 @@ void builtin_export(char **args);
 void builtin_unset(char **args);
 void builtin_env(char **envp);
 void builtin_exit();
-
-int is_builtin(char *cmd);
 void execute_builtin(char **args, char **envp);
+int is_builtin(char *cmd);
 
+/* --- parser/ast.c --- */
+t_ast	*init_tree(t_ast *tree);
 
-// environment variables
+/* --- env_var.c --- */
 char *expand_variable(char *arg);
 void expand_args(char **args);
 
