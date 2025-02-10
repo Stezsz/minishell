@@ -57,23 +57,109 @@ void	set_g_data(char **env)
 	g_data_ptr->shell_state = SH_READING;
 }
 
-// Função para iniciar o shell
-void	launch_shell(char **env)
+// Função para executar comandos encadeados por pipes
+void execute_piped(char **cmds[], int num_cmds, char **envp)
 {
-	char	*line;
+	int pipe_fd[2]; // Descritores de arquivo para o pipe
+	int prev_fd = -1; // Descritor de arquivo do comando anterior
 
+	for (int i = 0; i < num_cmds; i++)
+	{
+		if (i < num_cmds - 1)
+		{
+			// Criar um pipe para comunicação entre processos
+			if (pipe(pipe_fd) == -1)
+			{
+				perror("pipe");
+				exit(EXIT_FAILURE);
+			}
+		}
+
+		pid_t pid = fork(); // Criar um novo processo
+		if (pid == -1)
+		{
+			perror("fork");
+			exit(EXIT_FAILURE);
+		}
+
+		if (pid == 0) // Código do processo filho
+		{
+			if (prev_fd != -1)
+			{
+				dup2(prev_fd, STDIN_FILENO); // Redirecionar entrada padrão
+				close(prev_fd);
+			}
+			if (i < num_cmds - 1)
+			{
+				close(pipe_fd[0]);
+				dup2(pipe_fd[1], STDOUT_FILENO); // Redirecionar saída padrão
+				close(pipe_fd[1]);
+			}
+
+			if (is_builtin(cmds[i][0]))
+				execute_builtin(cmds[i], envp); // Executar comando builtin
+			else
+				execute_command(cmds[i], envp); // Executar comando externo
+			exit(g_data_ptr->exit_status);
+		}
+		else // Código do processo pai
+		{
+			if (prev_fd != -1)
+				close(prev_fd);
+			if (i < num_cmds - 1)
+			{
+				close(pipe_fd[1]);
+				prev_fd = pipe_fd[0]; // Guardar descritor de leitura do pipe
+			}
+		}
+	}
+
+	for (int i = 0; i < num_cmds; i++)
+		wait(NULL); // Esperar todos os processos filhos terminarem
+}
+
+// Função principal para lançar o shell
+void launch_shell(char **env)
+{
+	char *line;
 	line = NULL;
+
 	while (1)
 	{
 		set_g_data(env); // Definir dados globais
 		if (ft_readline(&line))
-			continue ;
-		char *args[] = {line, NULL};
-		expand_args(args);
-		if (is_builtin(args[0]))
-			execute_builtin(args, env);
-		else
-			execute_command(args, env);
-		free(line);
+			continue;
+
+		char *cmds[1024];
+		int num_cmds = 0;
+		char *token = strtok(line, "|"); // Dividir a linha em comandos separados por '|'
+		while (token)
+		{
+			cmds[num_cmds++] = token;
+			token = strtok(NULL, "|");
+		}
+
+		char **args[num_cmds];
+		for (int i = 0; i < num_cmds; i++)
+		{
+			args[i] = malloc(sizeof(char *) * 1024);
+			int j = 0;
+			token = strtok(cmds[i], " "); // Dividir cada comando em argumentos
+			while (token)
+			{
+				args[i][j++] = token;
+				token = strtok(NULL, " ");
+			}
+			args[i][j] = NULL;
+			expand_args(args[i]); // Expandir variáveis de ambiente nos argumentos
+		}
+
+		execute_piped(args, num_cmds, env); // Executar os comandos encadeados por pipes
+
+		for (int i = 0; i < num_cmds; i++)
+			free(args[i]); // Liberar memória alocada para os argumentos
+
+		free(line); // Liberar memória alocada para a linha de comando
 	}
 }
+

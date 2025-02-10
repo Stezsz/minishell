@@ -191,6 +191,7 @@ void	ft_wait(void);
 void	set_g_data(char **env);
 int		ft_readline(char **line);
 void	launch_shell(char **env);
+void	execute_piped(char **cmds[], int num_cmds, char **envp);
 
 /* --- utils.c --- */
 int		ft_strcmp(const char *s1, const char *s2);
