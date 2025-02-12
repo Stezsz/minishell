@@ -52,22 +52,16 @@ void builtin_echo(char **args)
 /**
  * Muda o diretório de trabalho do shell.
  */
-void builtin_cd(char **args)
-{
-    if (!args[1])
-    {
-        fprintf(stderr, "minishell: cd: missing argument\n");
-        g_data_ptr->exit_status = 1;
-        return;
-    }
-    if (chdir(args[1]) != 0)
-    {
-        perror("cd");
-            g_data_ptr->exit_status = 1;
-    }
-    else
-        g_data_ptr->exit_status = 0;
-}
+ void	builtin_cd(char **args)
+ {
+     if (!args[1])
+     {
+         fprintf(stderr, "minishell: cd: missing argument\n");
+         return;
+     }
+     if (chdir(args[1]) != 0)
+         perror("minishell: cd");
+ }
 
 /**
  * Imprime o diretório de trabalho atual.
@@ -84,22 +78,34 @@ void builtin_pwd()
 /**
  * Adiciona ou modifica variáveis de ambiente.
  */
-void builtin_export(char **args)
-{
-    if (!args[1])
-    {
-        fprintf(stderr, "minishell: export: missing argument\n");
-        g_data_ptr->exit_status = 1;
-        return;
-    }
-    if (putenv(args[1]) != 0)
-    {
-        perror("export");
-        g_data_ptr->exit_status = 1;
-    }
-    else
-        g_data_ptr->exit_status = 0;
-}
+ void builtin_export(char **args)
+ {
+     if (!args[1])
+     {
+         fprintf(stderr, "minishell: export: missing argument\n");
+         g_data_ptr->exit_status = 1;
+         return;
+     }
+
+     char *key = strtok(args[1], "=");
+     char *value = strtok(NULL, "");
+
+     if (!value)
+     {
+         fprintf(stderr, "minishell: export: invalid format\n");
+         g_data_ptr->exit_status = 1;
+         return;
+     }
+
+     if (setenv(key, value, 1) != 0)
+     {
+         perror("export");
+         g_data_ptr->exit_status = 1;
+     }
+     else
+         g_data_ptr->exit_status = 0;
+ }
+
 
 /**
  * Remove variáveis de ambiente.
@@ -120,6 +126,7 @@ void builtin_unset(char **args)
     else
         g_data_ptr->exit_status = 0;
 }
+
 
 /**
  * Imprime todas as variáveis de ambiente.
@@ -155,10 +162,12 @@ int is_builtin(char *cmd)
  */
 void execute_builtin(char **args, char **envp)
 {
-    if (strcmp(args[0], "echo") == 0)
-        builtin_echo(args);
-    else if (strcmp(args[0], "cd") == 0)
+    if (strcmp(args[0], "exit") == 0)
+        builtin_exit(); // Deve encerrar imediatamente
+    if (strcmp(args[0], "cd") == 0)
         builtin_cd(args);
+    else if (strcmp(args[0], "echo") == 0)
+        builtin_echo(args);
     else if (strcmp(args[0], "pwd") == 0)
         builtin_pwd();
     else if (strcmp(args[0], "export") == 0)
@@ -167,6 +176,5 @@ void execute_builtin(char **args, char **envp)
         builtin_unset(args);
     else if (strcmp(args[0], "env") == 0)
         builtin_env(envp);
-    else if (strcmp(args[0], "exit") == 0)
-        builtin_exit();
 }
+

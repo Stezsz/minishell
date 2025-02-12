@@ -153,13 +153,15 @@ void launch_shell(char **env)
 			args[i][j] = NULL;
 			expand_args(args[i]); // Expandir variáveis de ambiente nos argumentos
 		}
-
-		execute_piped(args, num_cmds, env); // Executar os comandos encadeados por pipes
-
+		if (num_cmds == 1 && args[0][0] && is_builtin(args[0][0]))
+			execute_builtin(args[0], env);
+		else
+			execute_piped(args, num_cmds, env);
 		for (int i = 0; i < num_cmds; i++)
 			free(args[i]); // Liberar memória alocada para os argumentos
 
 		free(line); // Liberar memória alocada para a linha de comando
 	}
 }
+
 
