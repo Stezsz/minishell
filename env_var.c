@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_var.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tborges- <tborges-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: strodrig <strodrig@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 19:37:14 by tborges-          #+#    #+#             */
-/*   Updated: 2025/02/07 16:23:06 by tborges-         ###   ########.fr       */
+/*   Updated: 2025/04/09 14:48:50 by strodrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,3 +42,21 @@ void expand_args(char **args)
         }
     }
 }
+
+
+
+/* cd home
+cd "32 32"
+
+echo -n -n -nnnnnn
+echo -nnnnnnn
+
+export
+unset
+
+exit code
+
+exit dsadas
+numeric argument required
+
+<<a << a */

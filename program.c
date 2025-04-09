@@ -6,7 +6,7 @@
 /*   By: strodrig <strodrig@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 10:50:25 by strodrig          #+#    #+#             */
-/*   Updated: 2025/02/04 10:50:25 by strodrig         ###   ########.fr       */
+/*   Updated: 2025/04/09 14:46:20 by strodrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,12 @@ int	ft_readline(char **line)
 	{
 		free(*line);
 		return (1);
+	}
+	*line = handle_unclosed_quotes(*line);
+	if (!*line) // Handle Ctrl+D during continuation
+	{
+		write(1, "exit\n", 5);
+		exit(1);
 	}
 	if (ft_strlen(*line) > 0)
 		add_history(*line);

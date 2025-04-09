@@ -4,7 +4,9 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 RM = rm -f
 
-FILES = minishell signals program utils builtins env_var exec parser/ast
+FILES = minishell signals program utils builtins env_var exec parser/ast \
+		builtins/echo builtins/cd builtins/pwd builtins/export \
+		builtins/unset builtins/env builtins/exit
 
 SRC		= $(FILES:=.c)
 OBJ		= $(FILES:=.o)

@@ -22,16 +22,8 @@
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <unistd.h>
 # include <sys/types.h>
-# include <sys/wait.h>
 # include <fcntl.h>
-# include <string.h>
-# include <errno.h>
-# include <readline/readline.h>
-# include <readline/history.h>
 # include <signal.h>
 
 # define EQUAL 0
@@ -88,19 +80,19 @@ enum e_node_type
 	PIPE,
 };
 
-typedef struct s_env_elem // Lista duplamente encadeada para armazenar as variáveis de ambiente como pares chave/valor.
+typedef struct s_env_elem
 {
-	char				*key;	// Nome da variável de ambiente
-	char				*value;	// Valor da variável de ambiente
-	struct s_env_elem	*next;	// Próximo elemento na lista
-	struct s_env_elem	*prev;	// Elemento anterior na lista
+	char				*key;
+	char				*value;
+	struct s_env_elem	*next;
+	struct s_env_elem	*prev;
 }	t_env_elem;
 
-typedef struct s_env // Lista duplamente encadeada para armazenar as variáveis de ambiente.
+typedef struct s_env
 {
-	t_env_elem			*head;	// Cabeça da lista
-	char				**env;	// Variáveis de ambiente
-	int					size;	// Tamanho da lista
+	t_env_elem			*head;
+	char				**env;
+	int					size;
 }	t_env;
 
 enum e_state
@@ -111,72 +103,75 @@ enum e_state
 	GENERAL,
 };
 
-typedef struct s_cmd // Comando a ser executado
+typedef struct s_cmd
 {
-	char	**args;	// Argumentos do comando
-	char	**env;	// Variáveis de ambiente
+	char	**args;
+	char	**env;
 }	t_cmd;
 
-typedef struct s_pipe // Estrutura para representar um pipe
+typedef struct s_pipe
 {
-	t_ast_node	*left;	// Nó esquerdo do pipe
-	t_ast_node	*right;	// Nó direito do pipe
+	t_ast_node	*left;
+	t_ast_node	*right;
 }	t_pipe;
 
-typedef union u_union // União para armazenar diferentes tipos de conteúdo de nó
+typedef union u_union
 {
-	t_pipe		*pipe;	// Conteúdo do tipo pipe
-	t_cmd		*cmd;	// Conteúdo do tipo comando
+	t_pipe		*pipe;
+	t_cmd		*cmd;
 }	t_union;
 
-typedef struct s_ast_node // Nó da árvore de sintaxe abstrata (AST)
+typedef struct s_ast_node
 {
-	enum e_node_type	type;		// Tipo do nó
-	t_union				*content;	// Conteúdo do nó
+	enum e_node_type	type;
+	t_union				*content;
 }	t_ast_node;
 
-typedef struct s_ast // Árvore de sintaxe abstrata (AST)
+typedef struct s_ast
 {
-	t_ast_node	*root;	// Raiz da árvore
+	t_ast_node	*root;
 }	t_ast;
 
-/*
-O AST serio os comandos tipo ls -l | grep txt, o pipe seria o | e os comandos seriam ls -l e grep txt
-*/
-
-typedef struct s_elem // Elemento em uma lista duplamente encadeada
+typedef struct s_elem
 {
-	char			*data;	// Dados do elemento
-	int				len;	// Comprimento dos dados
-	enum e_token	type;	// Tipo de token
-	enum e_state	state;	// Estado do token
-	t_elem			*next;	// Próximo elemento na lista
-	t_elem			*prev;	// Elemento anterior na lista
+	char			*data;
+	int				len;
+	enum e_token	type;
+	enum e_state	state;
+	t_elem			*next;
+	t_elem			*prev;
 }	t_elem;
 
-typedef struct s_list // Lista duplamente encadeada
+typedef struct s_list
 {
-	t_elem	*head;	// Cabeça da lista
-	t_elem	*tail;	// Cauda da lista
-	int		size;	// Tamanho da lista
+	t_elem	*head;
+	t_elem	*tail;
+	int		size;
 }	t_list;
 
-typedef struct s_data // Dados gerais do MiniShell
+typedef struct s_data
 {
-	int		exit_status;	// Status de saída
-	int		pid;			// ID do processo
-	int		which;			// Indicador de qual comando
-	int		alloc;			// Indicador de alocação
-	char	**env;			// Variáveis de ambiente
-	char	*siglist[NSIG];	// Lista de sinais
-	t_list	*lex;			// Lista de tokens lexicais
-	t_env	*ev;			// Lista de variáveis de ambiente
-	t_ast	*tree;			// Árvore de sintaxe abstrata
-	enum e_shell_state	shell_state;	// Estado do MiniShell
+	int					exit_status;
+	int					pid;
+	int					which;
+	int					alloc;
+	char				**env;
+	char				*siglist[NSIG];
+	t_list				*lex;
+	t_env				*ev;
+	t_ast				*tree;
+	enum e_shell_state	shell_state;
 }	t_data;
 
 /* --- minishell.c --- */
 void	init_data(t_data *data);
+
+/* --- utils.c --- */
+int		ft_strcmp(const char *s1, const char *s2);
+int		ft_strlen(const char *s);
+int		ft_strisspace(char *str);
+int		has_unclosed_quotes(const char *input);
+char	*handle_unclosed_quotes(char *input);
 
 /* --- signals.c --- */
 void	init_signals(t_data *data);
@@ -186,42 +181,50 @@ void	mask_signals(t_sigaction *sa);
 void	init_sig_list(t_data *data);
 
 /* --- program.c --- */
-int		cmd_count(t_ast_node *ptr);
-void	ft_wait(void);
-void	set_g_data(char **env);
+void	write_prompt(void);
 int		ft_readline(char **line);
+void	set_g_data(char **env);
 void	launch_shell(char **env);
 void	execute_piped(char **cmds[], int num_cmds, char **envp);
 
-/* --- utils.c --- */
-int		ft_strcmp(const char *s1, const char *s2);
-int		ft_strlen(const char *s);
-int		ft_strisspace(char *str);
-
 /* --- exec.c --- */
-char *find_executable(char *cmd);
-void handle_redirections(char **args);
-void execute_command(char **args, char **envp);
-void execute_piped_commands(char **cmd1, char **cmd2, char **envp);
+char	*find_executable(char *cmd);
+void	handle_redirections(char **args);
+void	execute_command(char **args, char **envp);
+void	execute_piped_commands(char **cmd1, char **cmd2, char **envp);
+
+/* --- builtins/echo.c --- */
+void	builtin_echo(char **args);
+
+/* --- builtins/cd.c --- */
+void	builtin_cd(char **args);
+
+/* --- builtins/pwd.c --- */
+void	builtin_pwd(void);
+
+/* --- builtins/export.c --- */
+void	builtin_export(char **args);
+
+/* --- builtins/unset.c --- */
+void	builtin_unset(char **args);
+
+/* --- builtins/env.c --- */
+void	builtin_env(char **envp);
+
+/* --- builtins/exit.c --- */
+void	builtin_exit(char **args);
 
 /* --- builtins.c --- */
-void builtin_echo(char **args);
-void builtin_cd(char **args);
-void builtin_pwd();
-void builtin_export(char **args);
-void builtin_unset(char **args);
-void builtin_env(char **envp);
-void builtin_exit();
-void execute_builtin(char **args, char **envp);
-int is_builtin(char *cmd);
+int		is_builtin(char *cmd);
+void	execute_builtin(char **args, char **envp);
 
 /* --- parser/ast.c --- */
 t_ast	*init_tree(t_ast *tree);
 
 /* --- env_var.c --- */
-char *expand_variable(char *arg);
-void expand_args(char **args);
+char	*expand_variable(char *arg);
+void	expand_args(char **args);
 
-extern t_data				*g_data_ptr;
+extern t_data	*g_data_ptr;
 
 #endif
