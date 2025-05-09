@@ -5,36 +5,54 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: strodrig <strodrig@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/27 12:20:04 by strodrig          #+#    #+#             */
-/*   Updated: 2025/01/27 12:20:04 by strodrig         ###   ########.fr       */
+/*   Created: 2025/04/25 20:36:14 by strodrig          #+#    #+#             */
+/*   Updated: 2025/04/25 21:08:31 by strodrig         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Inicializa a estrutura de dados para o MiniShell
-void	init_data(t_data *data)
+/**
+ * @brief Starts and runs the minishell program.
+ *
+ * Sets up the shell environment and runs an infinite loop that:
+ * - reads user input,
+ * - parses and validates it,
+ * - expands variables,
+ * - executes commands,
+ * - and cleans up after each cycle.
+ *
+ * @param argc number of command-line arguments.
+ * @param argv command-line arguments (unused).
+ * @param envp environment variables.
+ *
+ * @return never returns (infinite loop).
+ */
+int	main(int argc, char *argv[], char *envp[])
 {
-	data->exit_status = 0;
-	data->which = 0;
-	data->pid = 0;
-	data->tree = NULL;
-	data->ev = NULL;
-	data->alloc = 0;
+	t_shell	*shell;
+
+	(void)argv;
+	shell = get_shell();
+	check_main_args(argc);
+	shell->env = get_env(envp);
+	shell->exp = get_exp(make_env_arr(shell->env));
+	while (1)
+	{
+		interactive_mode();
+		if (lexer() == 1 || syntax_check() == 1)
+			free_atributes();
+		else
+		{
+			expander();
+			(void)init_cmd();
+			shell->last_exit_code = 0;
+			executer(shell);
+			close_all_fd_red();
+		}
+		free_atributes();
+		free(shell->readline);
+		shell->readline = NULL;
+	}
+	free_all();
 }
-
-// Função principal do MiniShell
-int	main(int ac, char **av, char **env)
-{
-	t_data	data;
-
-	(void)av;
-	if (ac != 1 || !*env)
-		return (1);
-	init_data(&data); // Inicializa a estrutura de dados para o MiniShell
-	init_signals(&data); // Inicializa os sinais
-	launch_shell(env); // Inicializa o MiniShell
-	return (0);
-}
-
-// Comando " ", apaga tudo BUG;
